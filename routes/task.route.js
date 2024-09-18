@@ -1,11 +1,18 @@
-const {Router} = require("express");
-const { createTask, deleteTask, adminGetAllTasks, getTask } = require("../controllers/task.controller");
+const { Router } = require("express");
+const { createTask, deleteTask, adminGetAllTasks, getTask, updateTask, addComment } = require("../controllers/task.controller");
 const { auth, admin } = require("../middleware/user.middleware");
-const taskRouter = Router();
 
-taskRouter.get("/",auth,getTask)
-taskRouter.post("/create",auth, createTask)
-taskRouter.delete("/delete/:id",auth, deleteTask)
-taskRouter.get("/admin",auth, admin, adminGetAllTasks)
+const taskRouter = (io) => {
+    const router = Router();
 
-module.exports = taskRouter
+    router.get("/", auth, getTask);
+    router.post("/create", auth, (req, res) => createTask(req, res, io));
+    router.put("/update/:id", auth, (req, res) => updateTask(req, res, io));
+    router.delete("/delete/:id", auth, (req, res) => deleteTask(req, res, io));
+    router.get("/admin", auth, admin, adminGetAllTasks);
+    router.post("/:taskId/comment", auth, (req, res) => addComment(req, res, io));
+
+    return router;
+};
+
+module.exports = taskRouter;
