@@ -12,7 +12,7 @@ const taskSchema = new mongoose.Schema({
     category: { type: String, required: true },
     completed: { type: Boolean, default: false },
     comments: [commentSchema]
-});
+},{timestamps : true});
 
 const taskModel = mongoose.model('task', taskSchema);
 module.exports = taskModel;
